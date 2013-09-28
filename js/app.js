@@ -32,8 +32,21 @@
 
     Todo.prototype.tagName = 'li';
 
+    Todo.prototype.template = function() {
+      return $('#todoTemplate').html();
+    };
+
+    Todo.prototype.templateData = function() {
+      return {
+        title: this.model.get('title'),
+        done: this.model.get('done')
+      };
+    };
+
     Todo.prototype.render = function() {
-      this.$el.html(this.model.get('title'));
+      this.$el.html(_.template(this.template(), this.templateData(), {
+        variable: 'todo'
+      }));
       return this;
     };
 
@@ -42,7 +55,10 @@
     };
 
     Todo.prototype.onclick = function(e) {
-      return alert('clicked');
+      this.model.set({
+        done: !this.model.get('done')
+      });
+      return this.render();
     };
 
     return Todo;
@@ -81,15 +97,18 @@
     var collection, todo, todo2, todo3, todoView;
     todo = new App.Models.Todo;
     todo.set({
-      title: 'Learn Ruby'
+      title: 'Learn Ruby',
+      done: false
     });
     todo2 = new App.Models.Todo;
     todo2.set({
-      title: '?'
+      title: '?',
+      done: true
     });
     todo3 = new App.Models.Todo;
     todo3.set({
-      title: 'Profit'
+      title: 'Profit',
+      done: false
     });
     collection = new Backbone.Collection([todo, todo2, todo3]);
     todoView = new App.Views.TodoList({
