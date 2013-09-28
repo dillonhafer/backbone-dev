@@ -8,17 +8,26 @@ class App.Models.Todo extends Backbone.Model
 class App.Views.Todo extends Backbone.View
   tagName: 'li'
 
+  template: ->
+    $('#todoTemplate').html()
+
+  templateData: ->
+    title: @model.get('title')
+    done: @model.get('done')
+
   render: ->
-    @$el.html @model.get('title')
+    @$el.html _.template(@template(), @templateData(), {variable: 'todo'})
     this
 
   events:
     'click' : 'onclick'
 
   onclick: (e)->
-    alert('clicked')
+    @model.set done: !@model.get('done')
+    @render()
 
 class App.Views.TodoList extends Backbone.View
+
   render: ->
     @$el.empty()
 
@@ -29,13 +38,13 @@ class App.Views.TodoList extends Backbone.View
 
 $ ->
   todo = new App.Models.Todo
-  todo.set title: 'Learn Ruby'
+  todo.set title: 'Learn Ruby', done: false
 
   todo2 = new App.Models.Todo
-  todo2.set title: '?'
+  todo2.set title: '?', done: true
 
   todo3 = new App.Models.Todo
-  todo3.set title: 'Profit'
+  todo3.set title: 'Profit', done: false
 
   collection = new Backbone.Collection [todo, todo2, todo3]
 
